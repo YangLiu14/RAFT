@@ -3,6 +3,7 @@ sys.path.append('core')
 
 import argparse
 import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 import cv2
 import glob
 import numpy as np
@@ -13,7 +14,6 @@ from PIL import Image
 from raft import RAFT
 from utils import flow_viz
 from utils.utils import InputPadder
-
 
 
 DEVICE = 'cuda'
@@ -82,9 +82,11 @@ def opt_flow_estimation(args):
     with torch.no_grad():
         base_dir = args.path
         data_srcs = [fn.split('/')[-1] for fn in sorted(glob.glob(os.path.join(base_dir, '*')))]
-        data_srcs.reverse()
+        if args.datasrc:
+            data_srcs = [args.datasrc]
 
         for data_src in data_srcs:
+            print("Processing", data_src)
             videos = [fn.split('/')[-1] for fn in sorted(glob.glob(os.path.join(base_dir, data_src, '*')))]
             for idx, video in enumerate(tqdm.tqdm(videos)):
                 fpath = os.path.join(base_dir, data_src, video)
@@ -133,9 +135,16 @@ if __name__ == '__main__':
     parser.add_argument('--model', help="restore checkpoint")
     parser.add_argument('--path', help="dataset for evaluation")
     parser.add_argument('--outdir', help="output directory for optical flow")
+    parser.add_argument('--datasrc', help="which datasrc to process")
     parser.add_argument('--small', action='store_true', help='use small model')
     parser.add_argument('--mixed_precision', action='store_true', help='use mixed precision')
     parser.add_argument('--alternate_corr', action='store_true', help='use efficent correlation implementation')
     args = parser.parse_args()
 
     opt_flow_estimation(args)
+
+# Example command
+"""
+BASE_DAVE = /mnt/raid/davech2y/liuyang/
+python gen_opt_flow.py --model /mnt/raid/davech2y/liuyang/model_weights/RAFT/raft-things.pth --path /mnt/raid/davech2y/liuyang/data/TAO/frames/val/ --outdir /mnt/raid/davech2y/liuyang/Optical_Flow/TaoVal_RAFT_things/
+"""
