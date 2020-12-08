@@ -3,7 +3,7 @@ sys.path.append('core')
 
 import argparse
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 import cv2
 import glob
 import numpy as np
@@ -14,6 +14,7 @@ from PIL import Image
 from raft import RAFT
 from utils import flow_viz
 from utils.utils import InputPadder
+from utils.frame_utils import writeFlow
 
 
 DEVICE = 'cuda'
@@ -118,15 +119,13 @@ def opt_flow_estimation(args):
                     if not os.path.exists(os.path.join(args.outdir, data_src, video)):
                         os.makedirs(os.path.join(args.outdir, data_src, video))
 
-                    flow_up = flow_up.cpu().numpy().squeeze()
-                    C, H, W = flow_up.shape
-                    flow_up = flow_up.reshape(H, W, C)
-                    flow_low = flow_low.cpu().numpy().squeeze()
-                    C, H, W = flow_low.shape
-                    flow_low = flow_low.reshape(H, W, C)
+                    flow_up = flow_up[0].permute(1, 2, 0).cpu().numpy()
+                    flow_low = flow_low[0].permute(1, 2, 0).cpu().numpy()
 
-                    writeFlowFile(up_fname, flow_up)
-                    writeFlowFile(low_fname, flow_low)
+                    # writeFlowFile(up_fname, flow_up)
+                    # writeFlowFile(low_fname, flow_low)
+                    writeFlow(up_fname, flow_up)
+                    writeFlow(low_fname, flow_low)
                     # viz(image1, flow_up)
 
 
@@ -146,5 +145,7 @@ if __name__ == '__main__':
 # Example command
 """
 BASE_DAVE = /mnt/raid/davech2y/liuyang/
-python gen_opt_flow.py --model /mnt/raid/davech2y/liuyang/model_weights/RAFT/raft-things.pth --path /mnt/raid/davech2y/liuyang/data/TAO/frames/val/ --outdir /mnt/raid/davech2y/liuyang/Optical_Flow/TaoVal_RAFT_things/
+python gen_opt_flow.py --model /mnt/raid/davech2y/liuyang/model_weights/RAFT/raft-sintel.pth --path /mnt/raid/davech2y/liuyang/data/TAO/frames/val/ --outdir /mnt/raid/davech2y/liuyang/Optical_Flow/TaoVal_RAFT_sintel/
+
+python gen_opt_flow.py --model /mnt/raid/davech2y/liuyang/model_weights/RAFT/raft-sintel.pth --path /mnt/raid/davech2y/liuyang/data/MOTS20/train/ --outdir /mnt/raid/davech2y/liuyang/Optical_Flow/MOTS20_RAFT_sintel/
 """
