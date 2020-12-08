@@ -9,8 +9,9 @@ import json
 import shutil
 from pycocotools.mask import encode, iou, area, decode, toBbox, merge
 from time import time
-from flow_utils import visulize_flow_file, readFlow
+from flow_utils import visulize_flow_file
 from visualize import visualize_proposals, save_with_pascal_colormap
+from core.utils.frame_utils import readFlow
 
 BASE_DIR = "/mnt/raid/davech2y/"
 
@@ -64,7 +65,6 @@ def warp_proposals_per_frame(frame_fn: str, flow_fn: str, json_out_dir, visualiz
     for idx, prop in enumerate(proposals):
         # numpy array of shape (H, W)
         mask = decode(prop['instance_mask'])
-        mask = decode(prop['instance_mask'])
         warped_mask = warp_flow(mask, flow)
         all_masks.append(mask)
         all_warps.append(warped_mask)
@@ -100,15 +100,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     ROOT_DIR = BASE_DIR + "/liuyang/TAO_eval/TAO_VAL_Proposals/Panoptic_Cas_R101_NMSoff_forTracking/"
     parser.add_argument('--prop_dir', type=str,
-                        # default="/nfs/cold_project/liuyang/mots1/FINAL/segmentation_output/noBackBone_COCO_dataAug8k/",
-                        default=ROOT_DIR + "boxNMS/_objectness_tmp/",
-                        # default="/nfs/volume-411-3/liuyang/bdd_100k/VAL/1_segmentation_output/filtered_cocoPretrain/",
-                        # default="/nfs/volume-411-3/liuyang/bdd_100k/TEST/1_segmentation_output/filtered_cocoPretrain/",
+                        # default=ROOT_DIR + "boxNMS/_objectness_tmp/",
+                        default=BASE_DIR + "/liuyang/data/MOTS20/MOTS20_provided_detections/MOTSChallenge/",
                         help='Location where the segmentations are')
     parser.add_argument('--opt_flow_dir', type=str,
-                        default=BASE_DIR + "/liuyang/Optical_Flow/RAFT_sintel_tmp/",
-                        # default="/nfs/cold_project/liuyang/bdd_100k/VAL/2_optical_flow/opt_flow_vectors/",
-                        # default="/nfs/volume-411-3/liuyang/bdd_100k/TEST/2_optical_flow/opt_flow_vectors/",
+                        # default=BASE_DIR + "/liuyang/Optical_Flow/RAFT_sintel_tmp/",
+                        default=BASE_DIR + "/liuyang/Optical_Flow/MOTS20_RAFT_sintel/",
                         help='Location where the optical flow vectors are stored')
     parser.add_argument('--out_dir', type=str,
                         default=ROOT_DIR + "/optical_flow_output/",
@@ -125,11 +122,12 @@ if __name__ == "__main__":
     print(">>>> optical flow from:", opt_flow_dir)
     print(">>>> output         to:", out)
 
-    data_srcs = ["images"]
+    data_srcs = ["unovost_style"]
     for datasrc in data_srcs:
         # Folder names of all the video sequence
         print("Processing", datasrc)
         video_names = [fn.split('/')[-1] for fn in sorted(glob.glob(os.path.join(all_proposals_dir, datasrc, '*')))]
+        video_names = ["0002"]
 
         for idx, video in enumerate(video_names):
             # list of json file names in the current video sequence

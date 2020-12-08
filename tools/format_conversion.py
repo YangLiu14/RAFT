@@ -118,7 +118,7 @@ if __name__ == "__main__":
 
     txt_dir = os.path.join(BASE_DIR, "data/MOTS20/MOTS20_provided_detections/MOTSChallenge/trainval/")
     out_basedir = os.path.join(BASE_DIR, "data/MOTS20/MOTS20_provided_detections/MOTSChallenge/")
-    seq_names = glob.glob(txt_dir + "/0002*")
+    seq_names = glob.glob(txt_dir + "/0005*")
     seq_names.sort()
     for seq_name in seq_names:
         txt_path = seq_name
