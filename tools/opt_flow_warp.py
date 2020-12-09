@@ -73,9 +73,7 @@ def warp_proposals_per_frame(frame_fn: str, flow_fn: str, json_out_dir, visualiz
         warp_enc['counts'] = warp_enc['counts'].decode(encoding="utf-8")
         proposals[idx]['forward_segmentation'] = warp_enc
 
-    folder_name = frame_fn.split('/')[-2]  # for KITTI_MOTS
-
-    # folder_name = frame_fn.split('/')[-4]  # for MOTS20
+    folder_name = '/'.join(frame_fn.split('/')[-3:-1])
     fn = frame_fn.split('/')[-1].replace('.json', '')
 
     if not os.path.exists(json_out_dir + "/" + folder_name):
@@ -112,6 +110,9 @@ if __name__ == "__main__":
                         # default="/nfs/volume-411-3/liuyang/bdd_100k/VAL/2_optical_flow/jsons/",
                         # default="/nfs/volume-411-3/liuyang/bdd_100k/TEST/2_optical_flow/jsons/",
                         help='Output directory')
+    parser.add_argument('--datasrc', nargs='+', type=str, help='Process only specific data source')
+    parser.add_argument('--visualize', action='store_true', help='whether to visualize the warped masks')
+
     args = parser.parse_args()
 
     all_proposals_dir = args.prop_dir
@@ -122,21 +123,22 @@ if __name__ == "__main__":
     print(">>>> optical flow from:", opt_flow_dir)
     print(">>>> output         to:", out)
 
-    data_srcs = ["unovost_style"]
+    data_srcs = ["ArgoVerse", "BDD", "Charades", "LaSOT", "YFCC100M"]
+    if args.datasrc:
+        data_srcs = args.datasrc
     for datasrc in data_srcs:
         # Folder names of all the video sequence
         print("Processing", datasrc)
         video_names = [fn.split('/')[-1] for fn in sorted(glob.glob(os.path.join(all_proposals_dir, datasrc, '*')))]
-        video_names = ["0002"]
 
         for idx, video in enumerate(video_names):
+            print("Processing", (datasrc + '/' + video))
             # list of json file names in the current video sequence
             video_path = os.path.join(all_proposals_dir, datasrc, video) + '/'
             flow_path = os.path.join(opt_flow_dir, datasrc, video) + '/'
 
             frames = sorted(glob.glob(video_path + '*'))
             flows = sorted(glob.glob(flow_path + '*_up.flo'))
-
             assert len(frames) - 1 == len(flows), "Inconsistent file amount between proposals and optical-flow vectors"
 
             # root_dir = '/'.join(video_path.split('/')[:-2])
@@ -148,7 +150,7 @@ if __name__ == "__main__":
 
             t = time()
             for frame_fn, flow_fn in tqdm.tqdm(zip(frames, flows), total=len(flows)):
-                warp_proposals_per_frame(frame_fn, flow_fn, out, visualize=True)
+                warp_proposals_per_frame(frame_fn, flow_fn, out, visualize=False)
             # add the last proposal directly to output file:
             fn = frames[-1].split("/")[-1]
             shutil.copyfile(frames[-1], out_dir + fn)
