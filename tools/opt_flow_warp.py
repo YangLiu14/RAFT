@@ -142,7 +142,7 @@ if __name__ == "__main__":
             assert len(frames) - 1 == len(flows), "Inconsistent file amount between proposals and optical-flow vectors"
 
             # root_dir = '/'.join(video_path.split('/')[:-2])
-            folder_name = video_path.split("/")[-2]
+            folder_name = '/'.join(video_path.split('/')[-3:-1])
 
             out_dir = out + "/" + folder_name + "/"
             if not os.path.exists(out_dir):
@@ -150,7 +150,7 @@ if __name__ == "__main__":
 
             t = time()
             for frame_fn, flow_fn in tqdm.tqdm(zip(frames, flows), total=len(flows)):
-                warp_proposals_per_frame(frame_fn, flow_fn, out, visualize=False)
+                warp_proposals_per_frame(frame_fn, flow_fn, out, visualize=args.visualize)
             # add the last proposal directly to output file:
             fn = frames[-1].split("/")[-1]
             shutil.copyfile(frames[-1], out_dir + fn)
