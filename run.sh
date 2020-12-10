@@ -22,8 +22,12 @@ python gen_opt_flow.py --model /storage/slurm/liuyang/model_weights/RAFT/raft-si
                        --outdir /storage/slurm/liuyang/Optical_Flow/TaoVal_RAFT_sintel/ \
                        --datasrc ArgoVerse
 
-
 python opt_flow_warp.py --prop_dir /mnt/raid/davech2y/liuyang/TAO_eval/TAO_VAL_Proposals/Panoptic_Cas_R101_NMSoff_forTracking/boxNMS/_objectness/ \
                         --opt_flow_dir /mnt/raid/davech2y/liuyang/Optical_Flow/TaoVal_RAFT_sintel/ \
                         --out_dir /mnt/raid/davech2y/liuyang/TAO_eval/TAO_VAL_Proposals/Panoptic_Cas_R101_NMSoff_forTracking/opt_flow_output/_objectness \
+                        --datasrc ArgoVerse
+
+python opt_flow_warp_subset.py --prop_dir /mnt/raid/davech2y/liuyang/TAO_eval/TAO_VAL_Proposals/subset_experiment/Panoptic_Cas_R101_NMSoff_forTracking_Embed/boxNMS/_objectness/ \
+                        --opt_flow_dir /mnt/raid/davech2y/liuyang/Optical_Flow/TaoVal_RAFT_sintel/ \
+                        --out_dir /mnt/raid/davech2y/liuyang/TAO_eval/TAO_VAL_Proposals/subset_experiment/Panoptic_Cas_R101_NMSoff_forTracking_Embed/opt_flow_output/_objectness \
                         --datasrc YFCC100M
