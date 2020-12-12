@@ -19,8 +19,18 @@ from utils.frame_utils import writeFlow
 
 DEVICE = 'cuda'
 
+# def load_image(imfile):
+#     img = np.array(Image.open(imfile)).astype(np.uint8)
+#     img = torch.from_numpy(img).permute(2, 0, 1).float()
+#     return img[None].to(DEVICE)
+
+
 def load_image(imfile):
-    img = np.array(Image.open(imfile)).astype(np.uint8)
+    img = Image.open(imfile)
+
+    size = 1024, 1024
+    img.thumbnail(size, Image.ANTIALIAS)  # Downsize the image
+    img = np.array(img).astype(np.uint8)
     img = torch.from_numpy(img).permute(2, 0, 1).float()
     return img[None].to(DEVICE)
 
@@ -115,17 +125,15 @@ def opt_flow_estimation(args):
                     flow_low_fname = ".".join(flow_low_fname)
 
                     up_fname = os.path.join(args.outdir, data_src, video, flow_up_fname)
-                    low_fname = os.path.join(args.outdir, data_src, video, flow_low_fname)
+                    # low_fname = os.path.join(args.outdir, data_src, video, flow_low_fname)
                     if not os.path.exists(os.path.join(args.outdir, data_src, video)):
                         os.makedirs(os.path.join(args.outdir, data_src, video))
 
                     flow_up = flow_up[0].permute(1, 2, 0).cpu().numpy()
-                    flow_low = flow_low[0].permute(1, 2, 0).cpu().numpy()
+                    # flow_low = flow_low[0].permute(1, 2, 0).cpu().numpy()
 
-                    # writeFlowFile(up_fname, flow_up)
-                    # writeFlowFile(low_fname, flow_low)
                     writeFlow(up_fname, flow_up)
-                    writeFlow(low_fname, flow_low)
+                    # writeFlow(low_fname, flow_low)
                     # viz(image1, flow_up)
 
 
