@@ -31,3 +31,10 @@ python opt_flow_warp_subset.py --prop_dir /mnt/raid/davech2y/liuyang/TAO_eval/TA
                         --opt_flow_dir /mnt/raid/davech2y/liuyang/Optical_Flow/TaoVal_RAFT_sintel/ \
                         --out_dir /mnt/raid/davech2y/liuyang/TAO_eval/TAO_VAL_Proposals/subset_experiment/Panoptic_Cas_R101_NMSoff_forTracking_Embed/opt_flow_output/_objectness \
                         --datasrc YFCC100M
+
+
+
+python opt_flow_warp_subset.py --prop_dir /storage/slurm/liuyang/TAO_eval/TAO_VAL_Proposals/subset_experiment/Panoptic_Cas_R101_NMSoff_forTracking_Embed/boxNMS/_objectness/ \
+                        --opt_flow_dir /storage/slurm/liuyang/Optical_Flow/TaoVal_RAFT_sintel/ \
+                        --out_dir /storage/slurm/liuyang/TAO_eval/TAO_VAL_Proposals/subset_experiment/Panoptic_Cas_R101_NMSoff_forTracking_Embed/opt_flow_output/_objectness \
+                        --datasrc ArgoVerse
