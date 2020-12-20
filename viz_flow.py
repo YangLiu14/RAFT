@@ -37,9 +37,11 @@ def viz(img, flo):
     # plt.imshow(img_flo / 255.0)
     # plt.show()
 
-def viz(img, flo, out_fpath):
+def viz_opt_file(img, flo, out_fpath):
     img = img[0].permute(1, 2, 0).cpu().numpy()
     # flo = flo[0].permute(1,2,0).cpu().numpy()
+
+    import pdb; pdb.set_trace()
     
     # map flow to rgb image
     flo = flow_viz.flow_to_image(flo)
@@ -86,19 +88,22 @@ def demo(args):
             # flow_low, flow_up = model(image1, image2, iters=20, test_mode=True)
 
             out_fname = flow_fn.split('/')[-1].replace('.flo', '.jpg')
-            viz(image1, flow_up, os.path.join(args.outdir, out_fname))
+            viz_opt_file(image1, flow_up, os.path.join(args.outdir, out_fname))
 
 
 if __name__ == '__main__':
-    BASE_DIR = "/mnt/raid/davech2y/liuyang/"
+    # BASE_DIR = "/mnt/raid/davech2y/liuyang/"
+    BASE_DIR = "/storage/slurm/liuyang/"
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', default=BASE_DIR + "/model_weights/RAFT/raft-sintel.pth", help="restore checkpoint")
     parser.add_argument('--small', action='store_true', help='use small model')
     parser.add_argument('--mixed_precision', action='store_true', help='use mixed precision')
-    parser.add_argument('--path', default=BASE_DIR + "/data/MOTS20/train/images/0002/", help="dataset for evaluation")
-    parser.add_argument('--flow_dir', default=BASE_DIR + "/Optical_Flow/MOTS20_RAFT_sintel/images/0002/", help="directory storing the .flo files")
-    parser.add_argument('--outdir', default=BASE_DIR + "/Optical_Flow/opt_viz/", help="visualization output dir")
+    # parser.add_argument('--path', default=BASE_DIR + "/data/MOTS20/train/images/0002/", help="dataset for evaluation")
+    parser.add_argument('--path', default=BASE_DIR + "/data/TAO/TAO_VAL/val/ArgoVerse/00c561b9-2057-358d-82c6-5b06d76cebcf/", help="dataset for evaluation")
+    # parser.add_argument('--flow_dir', default=BASE_DIR + "/Optical_Flow/MOTS20_RAFT_sintel/images/0002/", help="directory storing the .flo files")
+    parser.add_argument('--flow_dir', default=BASE_DIR + "/Optical_Flow/TaoVal_RAFT_sintel/ArgoVerse/00c561b9-2057-358d-82c6-5b06d76cebcf/", help="directory storing the .flo files")
+    parser.add_argument('--outdir', default=BASE_DIR + "/Optical_Flow/opt_viz_tmp/", help="visualization output dir")
     args = parser.parse_args()
 
     demo(args)
