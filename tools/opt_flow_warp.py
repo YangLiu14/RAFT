@@ -8,12 +8,14 @@ import cv2
 import json
 import shutil
 from pycocotools.mask import encode, iou, area, decode, toBbox, merge
+from PIL import Image
 from time import time
 from flow_utils import visulize_flow_file
 from visualize import visualize_proposals, save_with_pascal_colormap
 from core.utils.frame_utils import readFlow
 
-BASE_DIR = "/mnt/raid/davech2y/"
+# BASE_DIR = "/mnt/raid/davech2y/"
+BASE_DIR = "/storage/slurm/"
 
 def viz_mask(masks, image_size, out_fn):
     png = np.zeros(image_size, dtype=int)
@@ -35,6 +37,14 @@ def warp_flow(img, flow, binarize=True):
     :return: (H, W, C) numpy array. The warped image/mask.
     """
     h, w = flow.shape[:2]
+    # img preprocessing: downscaled the mask
+    img = Image.fromarray(img * 255)
+    size = max(h, w), max(h, w)
+    img.thumbnail(size, Image.ANTIALIAS)  # Downsize the image
+    img = (np.array(img)).astype(np.uint8)
+    img = (img / 255).astype(np.uint8)
+    # END of img preprocessing
+
     flow = -flow
     flow[:, :, 0] += np.arange(w)
     flow[:, :, 1] += np.arange(h)[:, np.newaxis]
@@ -57,6 +67,8 @@ def warp_proposals_per_frame(frame_fn: str, flow_fn: str, json_out_dir, visualiz
 
     with open(frame_fn, 'r') as f:
         proposals = json.load(f)  # list of dict
+    # npz_file = np.load(frame_fn, allow_pickle=True)
+    # proposals = npz_file['arr_0']
 
     flow = readFlow(flow_fn)
 

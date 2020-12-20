@@ -72,7 +72,7 @@ def viz_opt_file(img, flo, out_fpath):
     # cv2.imshow('image', img_flo[:, :, [2,1,0]]/255.0)
     # cv2.waitKey()
     # cv2.imwrite(out_fpath, img_flo[:, :, [2,1,0]]/255.0)
-    cv2.imwrite(out_fpath, img_flo[:, :, [2,1,0])
+    cv2.imwrite(out_fpath, img_flo[:, :, [2,1,0]])
 
 
 def viz_flow_from_model(img, flo, out_fpath):
@@ -119,9 +119,9 @@ def demo(args):
 
             padder = InputPadder(image1.shape)
             image1, image2 = padder.pad(image1, image2)
-            # flow_up = readFlow(flow_fn)
+            flow_up = readFlow(flow_fn)
             # flow_low, flow_up = model(image1, image2, iters=20, test_mode=True)
-            flow_low, flow_up = model(image1, image2, iters=20, test_mode=True)
+            # flow_low, flow_up = model(image1, image2, iters=20, test_mode=True)
 
             out_fname = flow_fn.split('/')[-1].replace('.flo', '.jpg')
 
@@ -142,7 +142,7 @@ if __name__ == '__main__':
     # parser.add_argument('--path', default=BASE_DIR + "/data/MOTS20/train/images/0002/", help="dataset for evaluation")
     parser.add_argument('--path', default=BASE_DIR + "/data/TAO/TAO_VAL/val/ArgoVerse/00c561b9-2057-358d-82c6-5b06d76cebcf/", help="dataset for evaluation")
     # parser.add_argument('--flow_dir', default=BASE_DIR + "/Optical_Flow/MOTS20_RAFT_sintel/images/0002/", help="directory storing the .flo files")
-    parser.add_argument('--flow_dir', default=BASE_DIR + "/Optical_Flow/TaoVal_RAFT_sintel/ArgoVerse/00c561b9-2057-358d-82c6-5b06d76cebcf/", help="directory storing the .flo files")
+    parser.add_argument('--flow_dir', default=BASE_DIR + "/Optical_Flow/TaoVal_RAFT_sintel_downscaled/ArgoVerse/00c561b9-2057-358d-82c6-5b06d76cebcf/", help="directory storing the .flo files")
     parser.add_argument('--outdir', default=BASE_DIR + "/Optical_Flow/opt_viz_tmp/", help="visualization output dir")
     args = parser.parse_args()
 
