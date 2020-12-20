@@ -38,11 +38,17 @@ def warp_flow(img, flow, binarize=True):
     """
     h, w = flow.shape[:2]
     # img preprocessing: downscaled the mask
-    img = Image.fromarray(img * 255)
+    img = Image.fromarray(img)
     size = max(h, w), max(h, w)
     img.thumbnail(size, Image.ANTIALIAS)  # Downsize the image
     img = (np.array(img)).astype(np.uint8)
-    img = (img / 255).astype(np.uint8)
+
+    # # TEST
+    # unique, count = np.unique(img, return_counts=True)
+    # cv2.imwrite("schrinked_mask.png", img * 255)
+    # # END of TEST
+
+    # img = (img / 255).astype(np.uint8)
     # END of img preprocessing
 
     flow = -flow
