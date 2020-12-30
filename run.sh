@@ -34,12 +34,12 @@ python opt_flow_warp_subset.py --prop_dir /mnt/raid/davech2y/liuyang/TAO_eval/TA
 
 
 
-python opt_flow_warp_subset.py --prop_dir /storage/slurm/liuyang/TAO_eval/TAO_VAL_Proposals/subset_experiment/Panoptic_Cas_R101_NMSoff_forTracking_Embed/boxNMS/_objectness/ \
-                        --opt_flow_dir /storage/slurm/liuyang/Optical_Flow/TaoVal_RAFT_sintel/ \
-                        --out_dir /storage/slurm/liuyang/TAO_eval/TAO_VAL_Proposals/subset_experiment/Panoptic_Cas_R101_NMSoff_forTracking_Embed/opt_flow_output/_objectness \
-                        --datasrc ArgoVerse
-
-python opt_flow_warp.py --prop_dir /storage/slurm/liuyang/TAO_eval/TAO_VAL_Proposals/Panoptic_Cas_R101_NMSoff_forTracking/boxNMS_npz002/_objectness/ \
+python opt_flow_warp.py --prop_dir /storage/slurm/liuyang/TAO_eval/TAO_VAL_Proposals/Panoptic_Cas_R101_NMSoff_forTracking_Embed/boxNMS_npz/_objectness/ \
                         --opt_flow_dir /storage/slurm/liuyang/Optical_Flow/TaoVal_RAFT_sintel_downscaled/ \
-                        --out_dir /storage/slurm/liuyang/TAO_eval/TAO_VAL_Proposals/Panoptic_Cas_R101_NMSoff_forTracking/opt_flow_output002/_objectness \
+                        --out_dir /storage/slurm/liuyang/TAO_eval/TAO_VAL_Proposals/Panoptic_Cas_R101_NMSoff_forTracking_Embed/opt_flow_output/_objectness \
+                        --file_type .npz --datasrc ArgoVerse
+
+python opt_flow_warp.py --prop_dir /storage/slurm/liuyang/TAO_eval/TAO_VAL_Proposals/Panoptic_Cas_R101_NMSoff_forTracking/nonOverlap_from_boxNMS/high_score_on_top/_objectness/ \
+                        --opt_flow_dir /storage/slurm/liuyang/Optical_Flow/TaoVal_RAFT_sintel_downscaled/ \
+                        --out_dir /storage/slurm/liuyang/TAO_eval/TAO_VAL_Proposals/Panoptic_Cas_R101_NMSoff_forTracking/opt_flow_nonOverlap/_objectness \
                         --datasrc ArgoVerse

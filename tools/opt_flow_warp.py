@@ -60,7 +60,7 @@ def warp_flow(img, flow, binarize=True):
     return res
 
 
-def warp_proposals_per_frame(frame_fn: str, flow_fn: str, json_out_dir, visualize=False):
+def warp_proposals_per_frame(frame_fn: str, flow_fn: str, json_out_dir, file_type, visualize=False):
     """
     Extract masks from the given frame (json), wrap them as "forward_segmentation"
     and store them in the new json file together with the original segmentation.
@@ -71,10 +71,14 @@ def warp_proposals_per_frame(frame_fn: str, flow_fn: str, json_out_dir, visualiz
     :param visualize: if True, store the `orginal mask` and the `warped mask` as png during the process.
     """
 
-    with open(frame_fn, 'r') as f:
-        proposals = json.load(f)  # list of dict
-    # npz_file = np.load(frame_fn, allow_pickle=True)
-    # proposals = npz_file['arr_0']
+    if file_type == ".json":
+        with open(frame_fn, 'r') as f:
+            proposals = json.load(f)  # list of dict
+    elif file_type == ".npz":
+        npz_file = np.load(frame_fn, allow_pickle=True)
+        proposals = npz_file['arr_0'].tolist()
+    else:
+        raise Exception("Unrecognized file type.")
 
     flow = readFlow(flow_fn)
 
@@ -129,6 +133,7 @@ if __name__ == "__main__":
                         # default="/nfs/volume-411-3/liuyang/bdd_100k/TEST/2_optical_flow/jsons/",
                         help='Output directory')
     parser.add_argument('--datasrc', nargs='+', type=str, help='Process only specific data source')
+    parser.add_argument('--file_type', default=".json", type=str, help='.json or .npz')
     parser.add_argument('--visualize', action='store_true', help='whether to visualize the warped masks')
 
     args = parser.parse_args()
@@ -168,10 +173,18 @@ if __name__ == "__main__":
 
             t = time()
             for frame_fn, flow_fn in tqdm.tqdm(zip(frames, flows), total=len(flows)):
-                warp_proposals_per_frame(frame_fn, flow_fn, out, visualize=args.visualize)
-            # add the last proposal directly to output file:
-            fn = frames[-1].split("/")[-1]
-            shutil.copyfile(frames[-1], out_dir + fn)
+                warp_proposals_per_frame(frame_fn, flow_fn, out, file_type=args.file_type, visualize=args.visualize)
+
+            if args.file_type == ".json":
+                # add the last proposal directly to output file:
+                fn = frames[-1].split("/")[-1]
+                shutil.copyfile(frames[-1], out_dir + fn)
+            elif args.file_type == ".npz":
+                fn = frames[-1].split("/")[-1]
+                proposals = np.load(frames[-1], allow_pickle=True)['arr_0'].tolist()
+                with open(os.path.join(out, folder_name, fn + '.json'), 'w') as fout:
+                    json.dump(proposals, fout)
+                import pdb; pdb.set_trace()
 
             print(str(idx), 'video', video, 'finished in', time() - t, 'seconds.', len(flows), 'flows at',
                   (time() - t) / (len(flows) - 1), 'per image.')
