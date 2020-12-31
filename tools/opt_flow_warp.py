@@ -184,7 +184,6 @@ if __name__ == "__main__":
                 proposals = np.load(frames[-1], allow_pickle=True)['arr_0'].tolist()
                 with open(os.path.join(out, folder_name, fn + '.json'), 'w') as fout:
                     json.dump(proposals, fout)
-                import pdb; pdb.set_trace()
 
             print(str(idx), 'video', video, 'finished in', time() - t, 'seconds.', len(flows), 'flows at',
                   (time() - t) / (len(flows) - 1), 'per image.')
